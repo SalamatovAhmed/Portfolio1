@@ -16,6 +16,8 @@
     <div class="background-effect"></div>
 
     <div class="container">
+        <button id="theme-toggle" class="btn-secondary">Тёмная тема</button>
+
         <header class="header">
             <div class="logo">Саламатов Ахмед</div>
             <nav class="nav" role="navigation" aria-label="Основное меню">
@@ -23,7 +25,12 @@
                 <a href="#skills">Навыки</a>
                 <a href="#projects">Проекты</a>
                 <a href="#contacts">Контакты</a>
-                <button class="menu-toggle" aria-label="Открыть меню">☰</button>
+                <button class="hamburger" aria-label="Открыть меню" aria-expanded="false">
+  <span></span>
+  <span></span>
+  <span></span>
+</button>
+
             </nav>
         </header>
 
@@ -149,24 +156,84 @@
     </footer>
 
     <!-- Скрипты -->
-    <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
-    <script src="script.js"></script>
-    <script>
-        const g = document.getElementById('greeting');
-        const btn = document.getElementById('askName');
+   <script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', () => {
 
-        function showGreeting(name) {
-            g.textContent = name && name.trim() !== "" ?
-                `${name}, добро пожаловать в мое портфолио!` :
-                'Добро пожаловать!';
-        }
+  // === Приветствие ===
+  const greeting = document.getElementById('greeting');
+  const askNameBtn = document.getElementById('askName');
+  askNameBtn.addEventListener('click', () => {
+    const name = prompt('Как тебя зовут?');
+    greeting.textContent = name && name.trim() !== ""
+      ? `${name}, добро пожаловать в моё портфолио!`
+      : 'Добро пожаловать!';
+  });
 
-        btn.addEventListener('click', () => {
-            const name = prompt('Как тебя зовут?');
-            showGreeting(name);
+  // === Переключатель темы ===
+  const themeToggle = document.getElementById('theme-toggle');
+  const savedTheme = localStorage.getItem('theme');
+  if (savedTheme === 'light') {
+    document.body.classList.add('light');
+    themeToggle.textContent = 'Тёмная тема';
+  }
+
+  themeToggle.addEventListener('click', () => {
+    document.body.classList.toggle('light');
+    const isLight = document.body.classList.contains('light');
+    localStorage.setItem('theme', isLight ? 'light' : 'dark');
+    themeToggle.textContent = isLight ? 'Тёмная тема' : 'Светлая тема';
+  });
+
+  // === Гамбургер ===
+  const hamburger = document.querySelector('.hamburger');
+  const nav = document.querySelector('.nav');
+  hamburger.addEventListener('click', () => {
+    nav.classList.toggle('open');
+    const expanded = hamburger.getAttribute('aria-expanded') === 'true';
+    hamburger.setAttribute('aria-expanded', !expanded);
+  });
+
+  document.querySelectorAll('.nav a').forEach(link => {
+    link.addEventListener('click', () => {
+      nav.classList.remove('open');
+      hamburger.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  // === Кнопка "Наверх" ===
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) scrollTopBtn.classList.add('show');
+    else scrollTopBtn.classList.remove('show');
+  });
+
+  scrollTopBtn.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  // === Плавная прокрутка по якорям ===
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', e => {
+      e.preventDefault();
+      const id = link.getAttribute('href');
+      const target = document.querySelector(id);
+      if (target) {
+        window.scrollTo({
+          top: target.offsetTop - 60,
+          behavior: 'smooth'
         });
-    </script>
+      }
+    });
+  });
 
+  // === Анимации ===
+  AOS.init();
+});
+</script>
+
+<!-- Кнопка "Наверх" -->
+<button id="scrollTopBtn" class="scroll-top" title="Наверх" aria-label="Наверх">↑</button>
 
 
 </body>
